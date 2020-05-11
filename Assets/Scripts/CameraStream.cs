@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +14,7 @@ public class CameraStream : MonoBehaviour
     private NetworkProceed _network;
 
     private WebCamTexture _webCamTexture;
+
     void Start()
     {
         WebCamDevice[] devices = WebCamTexture.devices;
@@ -34,19 +37,17 @@ public class CameraStream : MonoBehaviour
     void Update()
     {
         byte[] snap = TakeSnapshot(_rawImage, this._webCamTexture);
-        _network.Send(snap);
+        this._network.Send(snap);
     }
 
     private static byte[] TakeSnapshot(RawImage rawImage, WebCamTexture webCamTexture)
     {
-        //Create a Texture2D with the size of the rendered image on the screen
         Texture2D texture = new Texture2D(rawImage.texture.width, rawImage.texture.height, TextureFormat.ARGB32, false);
 
-        //Save the image to the Texture2D
         texture.SetPixels(webCamTexture.GetPixels());
         texture.Apply();
 
-        byte[] bytes = texture.EncodeToPNG();
+        byte[] bytes = texture.EncodeToJPG();
         return bytes;
     }
 
