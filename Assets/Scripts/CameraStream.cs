@@ -2,18 +2,22 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CameraStream : MonoBehaviour
 {
     [SerializeField]
-    private RawImage _rawImage;
+    private RawImage rawImage;
 
     [SerializeField]
-    private NetworkProceed _network;
+    private RawImage toRenderRecievedImage;
 
-    private WebCamTexture _webCamTexture;
+    [SerializeField]
+    private NetworkProceed network;
+
+    private WebCamTexture webCamTexture;
 
     void Start()
     {
@@ -22,11 +26,11 @@ public class CameraStream : MonoBehaviour
         // for debugging purposes, prints available devices to the console
         for (int i = 0; i < devices.Length; i++)
         {
-            print("Webcam available: " + devices[i].name);
+            Debug.Log("Webcam available: " + devices[i].name);
         }
 
         WebCamTexture webCamTexture = new WebCamTexture(devices[0].name);
-        this._webCamTexture = webCamTexture;
+        this.webCamTexture = webCamTexture;
 
         RawImage rawImage;
         rawImage = GetComponent<RawImage>();
@@ -36,8 +40,17 @@ public class CameraStream : MonoBehaviour
 
     void Update()
     {
-        byte[] snap = TakeSnapshot(_rawImage, this._webCamTexture);
-        this._network.Send(snap);
+        byte[] snap = TakeSnapshot(rawImage, this.webCamTexture);
+        this.network.Send(snap);
+
+        if (Input.GetKeyDown("Mouse 0"))
+        {
+            byte[] recieved = this.network.Recieve();
+            Debug.Log("Recieved: " + recieved.Length);
+
+            Texture2D texture = new Texture2D(toRenderRecievedImage.texture.width, toRenderRecievedImage.texture.height, TextureFormat.ARGB32, false);
+            toRenderRecievedImage.texture = texture;
+        }
     }
 
     private static byte[] TakeSnapshot(RawImage rawImage, WebCamTexture webCamTexture)

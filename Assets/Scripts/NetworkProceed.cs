@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Net;
-using System.Net.Sockets;
 using UnityEngine;
 
 public class NetworkProceed : MonoBehaviour
@@ -26,5 +24,19 @@ public class NetworkProceed : MonoBehaviour
         {
             Debug.LogError("Sending data error: " + ex.Message);
         }
+    }
+
+    public byte[] Recieve()
+    {
+        try
+        {
+            return this.networkService.Recieve();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
+
+        return new byte[0];
     }
 }

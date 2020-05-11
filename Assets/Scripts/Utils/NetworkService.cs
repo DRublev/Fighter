@@ -11,6 +11,7 @@ public class NetworkService
     {
         this.client = new UdpClient(ip, port);
         this.client.Connect(ip, port);
+        this.endpoint = new IPEndPoint(IPAddress.Parse(ip), port);
         // this.client.Client.ReceiveBufferSize = 1024 * 1024;
     }
 
@@ -32,4 +33,12 @@ public class NetworkService
         udpClient.EndSend(result);
     }
 
+    public byte[] Recieve()
+    {
+        IPEndPoint RemoteIpEndPoint = this.endpoint;
+
+        // Blocks until a message returns on this socket from a remote host.
+        Byte[] receivedBytes = this.client.Receive(ref RemoteIpEndPoint);
+        return receivedBytes;
+    }
 }
