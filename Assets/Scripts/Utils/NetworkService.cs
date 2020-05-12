@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -6,39 +8,59 @@ public class NetworkService
 {
     private UdpClient client;
     private IPEndPoint endpoint = null;
+    private IAsyncResult recieveResult = null;
+    private MemoryStream recieveStream;
 
     public NetworkService(String ip, int port)
     {
         this.client = new UdpClient(ip, port);
-        this.client.Connect(ip, port);
         this.endpoint = new IPEndPoint(IPAddress.Parse(ip), port);
-        // this.client.Client.ReceiveBufferSize = 1024 * 1024;
     }
 
-    public void Send(byte[] data)
+    public void Send(byte[] data, AsyncCallback callback)
     {
         try
         {
-            this.client.BeginSend(data, data.Length, new AsyncCallback(sendCallBack), this.client);
+            this.client.BeginSend(data, data.Length, callback, this.client);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             throw ex;
         }
     }
 
-    private static void sendCallBack(IAsyncResult result)
+    public void Sent(ref MemoryStream stream, AsyncCallback callback)
     {
-        UdpClient udpClient = (UdpClient)result.AsyncState;
-        udpClient.EndSend(result);
+        try
+        {
+            while (stream.CanRead)
+            {
+                byte[] data = new byte[stream.Length];
+                stream.Read(data, 0, 256);
+                this.client.Send(data, data.Length);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
-    public byte[] Recieve()
+    public ref MemoryStream StartRecieve()
     {
-        IPEndPoint RemoteIpEndPoint = this.endpoint;
+        StartListening();
+        return ref this.recieveStream;
+    }
 
-        // Blocks until a message returns on this socket from a remote host.
-        Byte[] receivedBytes = this.client.Receive(ref RemoteIpEndPoint);
-        return receivedBytes;
+    private void Recieve(IAsyncResult result)
+    {
+        byte[] recievedBytes = this.client.EndReceive(result, ref this.endpoint);
+        this.recieveStream.Write(recievedBytes, 0, recievedBytes.Length);
+        StartListening();
+    }
+
+    private void StartListening()
+    {
+        this.recieveResult = this.client.BeginReceive(Recieve, this.client);
     }
 }
