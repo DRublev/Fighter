@@ -6,14 +6,12 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class BoneManager : MonoBehaviour
 {
-
 	public Animator animator;
-
 	public HumanBodyBones Bone;
+	public Vector3 Position = new Vector3(0, 0, 0);
+
 	[Range(-1, 1)]
 	public float LeftArmAmt = 1;
-
-	public Vector3 Position = new Vector3(0, 0, 0);
 
 	[Range(0, 2)]
 	public int TargetAxis;
@@ -32,7 +30,7 @@ public class BoneManager : MonoBehaviour
 	{
 		var bone = animator.GetBoneTransform(Bone);
 
-		var angleMin = 50;
+		var angleMin = 10;
 		var angleMax = 50;
 
 		var ang = Mathf.LerpAngle(angleMin, angleMax, (LeftArmAmt + 1) / 2f);
