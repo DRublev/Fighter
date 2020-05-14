@@ -30,7 +30,7 @@ namespace Assets.Scripts
     static class SkeletonMapper
     {
         private static Dictionary<OutputFormat, string[]> BoneMap = new Dictionary<OutputFormat, string[]>();
-        static string[] BODY_25_Map = new string[]
+        static readonly string[] BODY_25_Map = new string[]
         {
             "Nose",
             "Neck",

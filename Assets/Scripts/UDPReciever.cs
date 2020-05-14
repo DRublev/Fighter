@@ -14,16 +14,15 @@ public class UDPReceiver
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="ip">Not in use</param>
     /// <param name="port"></param>
-    public UDPReceiver(string ip, int port)
+    public UDPReceiver(int port)
     {
         //Ip = ip;
         Port = port;
         udpReceiver = new UdpClient(Port);
         received = new Queue<string>();
     }
-    public UDPReceiver() : this("127.0.0.1", 8081)
+    public UDPReceiver() : this(8081)
     {
     }
 
@@ -55,7 +54,6 @@ public class UDPReceiver
         if (received.Count == 0)
             return false;
         string[] blocks = this.GetBlocks(received.Dequeue());
-        List<string[]> list = new List<string[]>();
         foreach (string element in blocks)
         {
             string[] rawVectors = element.Trim(new char[] { '{', '}' }).Split(new string[] { "},{" }, StringSplitOptions.None);

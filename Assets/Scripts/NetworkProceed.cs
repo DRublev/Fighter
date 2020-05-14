@@ -16,7 +16,7 @@ public class NetworkProceed : MonoBehaviour
     void Awake()
     {
         this.networkService = new NetworkService(ServerIP, Port);
-        this.udpReceiver = new UDPReceiver(null, 8081);
+        this.udpReceiver = new UDPReceiver(8081);
     }
     private void Start()
     {
@@ -34,7 +34,7 @@ public class NetworkProceed : MonoBehaviour
             if (this.networkService != null)
             {
                 Debug.Log("Data size is " + toSendBytes.Length);
-                this.networkService.Send(toSendBytes, new AsyncCallback(sendCallBack));
+                this.networkService.Send(toSendBytes, new AsyncCallback(SendCallBack));
             }
         }
         catch (Exception ex)
@@ -43,30 +43,13 @@ public class NetworkProceed : MonoBehaviour
         }
     }
 
-    private static void sendCallBack(IAsyncResult result)
+    private static void SendCallBack(IAsyncResult result)
     {
         UdpClient udpClient = (UdpClient) result.AsyncState;
         udpClient.EndSend(result);
         Debug.Log("Sending data " + udpClient.Available);
     }
 
-    public byte[] Recieve()
-    {
-        try
-        {
-            MemoryStream recievedStream = this.networkService.StartRecieve();
-            byte[] recievedData = new byte[recievedStream.Length];
-
-            recievedStream.Read(recievedData, 0, (int) recievedStream.Length);
-            return recievedData;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogException(ex);
-        }
-
-        return new byte[0];
-    }
     public List<Vector2[]> RecieveList()
     {
         List<Vector2[]> result = new List<Vector2[]>();
