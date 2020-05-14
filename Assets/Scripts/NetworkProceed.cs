@@ -16,7 +16,7 @@ public class NetworkProceed : MonoBehaviour
     void Awake()
     {
         this.networkService = new NetworkService(ServerIP, Port);
-        this.udpReceiver = new UDPReceiver(null, Port);
+        this.udpReceiver = new UDPReceiver(null, 8081);
     }
     private void Start()
     {

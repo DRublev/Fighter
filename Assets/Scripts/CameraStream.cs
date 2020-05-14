@@ -40,8 +40,8 @@ public class CameraStream : MonoBehaviour {
 	void FixedUpdate() {
 		byte[] snap = TakeSnapshot(rawImage, this.webCamTexture);
 		this.network.Send(snap);
-
-		if (Input.GetKey(KeyCode.Mouse0)) {
+        this.network.RecieveList();
+        if (Input.GetKey(KeyCode.Mouse0)) {
 			//SaveTextureOnDisk(snap);
 		}
 	}
