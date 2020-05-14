@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using Newtonsoft.Json;
 
 using UnityEngine;
 
@@ -15,6 +16,11 @@ public class NetworkProceed : MonoBehaviour
     void Awake()
     {
         this.networkService = new NetworkService(ServerIP, Port);
+    }
+    private void FixedUpdate()
+    {
+        Vector2[] v2 = { new Vector2(2, 3), new Vector2(12, 13), new Vector2(112, 113) };
+        Debug.Log(JsonConvert.SerializeObject(v2));
     }
 
     public void Send(byte[] toSendBytes)

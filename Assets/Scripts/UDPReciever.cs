@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using UnityEngine;
 public class UDPReciver
 {
     //public string Ip
@@ -34,7 +36,7 @@ public class UDPReciver
         }
         catch(Exception e)
         {
-            UnityEngine.Debug.LogException(e);
+            Debug.LogException(e);
         }
     }
     public void ReceiveEnd()
@@ -48,5 +50,17 @@ public class UDPReciver
         byte[] recvd = udpReceiver.EndReceive(result, ref endPoint);
         udpReceiver.BeginReceive(new AsyncCallback(Receive), null);
         received.Enqueue(System.Text.Encoding.UTF8.GetString(recvd));
+    }
+    /*public bool GetMsg()
+    {
+        if(received.Count == 0)
+            return false;
+         = JsonConvert.
+        
+    }*/
+    private string[] GetBlocks(string arg)
+    {
+        arg = arg.Trim(new char[] { '[', ']' });
+        return arg.Split(new string[] { "],[" }, StringSplitOptions.None);
     }
 }
