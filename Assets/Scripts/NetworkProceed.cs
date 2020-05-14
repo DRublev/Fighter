@@ -11,10 +11,20 @@ public class NetworkProceed : MonoBehaviour
     public int Port = 8080;
 
     private NetworkService networkService = null;
+    private UDPReceiver udpReceiver;
 
     void Awake()
     {
         this.networkService = new NetworkService(ServerIP, Port);
+        this.udpReceiver = new UDPReceiver(null, Port);
+    }
+    private void Start()
+    {
+        udpReceiver.ReceiveStart();
+    }
+    private void FixedUpdate()
+    {
+        
     }
 
     public void Send(byte[] toSendBytes)
@@ -56,5 +66,12 @@ public class NetworkProceed : MonoBehaviour
         }
 
         return new byte[0];
+    }
+    public List<Vector2[]> RecieveList()
+    {
+        List<Vector2[]> result = new List<Vector2[]>();
+        if (!udpReceiver.GetMsg(ref result))
+            Debug.Log("Server is not sending");
+        return result;
     }
 }
