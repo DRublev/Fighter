@@ -53,43 +53,7 @@ public class UDPReceiver
     {
         if (received.Count == 0)
             return false;
-        string[] blocks = this.GetBlocks(received.Dequeue());
-        foreach (string element in blocks)
-        {
-            string[] rawVectors = element.Trim(new char[] { '{', '}' }).Split(new string[] { "},{" }, StringSplitOptions.None);
-            if (rawVectors.Length != 2)
-                Debug.LogError("Data received via UDP is fucked");
-            Vector2[] vectors = new Vector2[2];
-            for (int i = 0; i < 2; i++)
-            {
-                vectors[i] = this.ToVector(rawVectors[i]);
-            }
-            result.Add(vectors);
-        }
-        return true;
+        return true
     }
-    private string[] GetBlocks(string arg)
-    {
-        arg = arg.Trim(new char[] { '[', ']' });
-        return arg.Split(new string[] { "],[" }, StringSplitOptions.None);
-    }
-    private Vector2 ToVector(string str)
-    {
-        Vector2 vector = new Vector2();
-        string[] divStr = str.Split(new char[] { ',' });
-        string digitStr = null;
-        foreach (char ch in divStr[0])
-        {
-            if (char.IsDigit(ch))
-                digitStr += ch;
-        }
-        vector.x = int.Parse(digitStr);
-        foreach (char ch in divStr[1])
-        {
-            if (char.IsDigit(ch))
-                digitStr += ch;
-        }
-        vector.y = int.Parse(digitStr);
-        return vector;
-    }
+    
 }
