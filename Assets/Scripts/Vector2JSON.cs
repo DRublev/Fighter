@@ -14,5 +14,13 @@ public class Vector2JSON
     {
         return new Vector2(X, Y);
     }
+    public override string ToString()
+    {
+        string result = string.Empty;
+        result += X.ToString();
+        result += "; ";
+        result += Y.ToString();
+        return result;
+    }
 
 }

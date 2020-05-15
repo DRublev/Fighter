@@ -20,7 +20,7 @@ public class NetworkProceed : MonoBehaviour
     }
     private void Start()
     {
-
+        udpReceiver.ReceiveStart();
     }
     private void FixedUpdate()
     {
@@ -52,9 +52,20 @@ public class NetworkProceed : MonoBehaviour
 
     public List<Vector2[]> RecieveList()
     {
-        List<Vector2[]> result = new List<Vector2[]>();
+        List<Vector2JSON[]> result = new List<Vector2JSON[]>();
         if (!udpReceiver.GetMsg(ref result))
             Debug.Log("No usefull info riceived via UDP");
-        return result;
+        List<Vector2[]> uVector2 = new List<Vector2[]>();
+        //dumb but fast to make
+        foreach(Vector2JSON[] element in result)
+        {
+            Vector2[] vectors = new Vector2[element.Length];
+            for(int i = 0; i < element.Length; i++)
+            {
+                vectors[i] = element[i].ToVector2();
+            }
+            uVector2.Add(vectors);
+        }
+        return uVector2;
     }
 }
