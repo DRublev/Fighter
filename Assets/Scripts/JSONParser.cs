@@ -39,7 +39,7 @@ public static class JSONParser
         return parsed;
     }
 
-    private static bool TryParseRegex(out string[] result, string input, string regexString)
+    public static bool TryParseRegex(out string[] result, string input, string regexString)
     {
         Regex regex = new Regex(regexString);
         MatchCollection matches = regex.Matches(input);

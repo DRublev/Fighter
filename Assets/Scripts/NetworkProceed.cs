@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
-using System.Text.RegularExpressions;
 
 using UnityEngine;
 
@@ -55,7 +54,7 @@ public class NetworkProceed : MonoBehaviour
     {
         List<Vector2[]> result = new List<Vector2[]>();
         if (!udpReceiver.GetMsg(ref result))
-            Debug.Log("Server is not sending");
+            Debug.Log("No usefull info riceived via UDP");
         return result;
     }
 }
