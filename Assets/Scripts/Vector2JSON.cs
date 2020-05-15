@@ -14,4 +14,5 @@ public class Vector2JSON
     {
         return new Vector2(X, Y);
     }
+
 }
