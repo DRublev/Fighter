@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 using UnityEngine;
 
@@ -20,7 +21,19 @@ public class NetworkProceed : MonoBehaviour
     }
     private void Start()
     {
-        udpReceiver.ReceiveStart();
+        //udpReceiver.ReceiveStart();
+        Vector2JSON[,] v2 = { { new Vector2JSON(1, 1), new Vector2JSON(2, 1) },
+                              { new Vector2JSON(2, 1), new Vector2JSON(2, 2) },
+                              { new Vector2JSON(3, 1), new Vector2JSON(3, 2) }
+                            };
+        string str = "(asd1),(ASD2),(asd3)";
+        Regex regex = new Regex(@"\(.*?\)");
+        MatchCollection matches = regex.Matches(str);
+        for(int i=0; i < matches.Count; i++)
+        {
+            string st = matches[i].Value;
+            Debug.Log(st);
+        }
     }
     private void FixedUpdate()
     {
