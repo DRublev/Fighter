@@ -74,66 +74,76 @@ namespace Assets.Scripts
         public void Send(byte[] toSend)
         {
             // Create chunk info and concat with chunk data
-            string dataLength = toSend.Length.ToString();
-            int lastChunkSize;
-            int lastChunkIndex = -1;
-            int chunksCount = Math.DivRem(toSend.Length, bytesOnChunkData, out lastChunkSize);
-            if (lastChunkSize > 0)
+            try
             {
-                chunksCount++;
-                lastChunkIndex = chunksCount * bytesOnChunkData;
-
-            }
-            string chunksLength = chunksCount.ToString();
-            string chunkInfo = GenerateId() + separator + dataLength + separator + chunksLength + separator;
-
-            if (chunksCount >= 1)
-            {
-                List<byte> toSendList = toSend.ToList();
-                for (int i = 0; i < (lastChunkSize > 0 ? chunksCount - 1 : chunksCount); i++)
+                string dataId = GenerateId();
+                string dataLength = toSend.Length.ToString();
+                int lastChunkSize;
+                int lastChunkIndex = -1;
+                int chunksCount = Math.DivRem(toSend.Length, bytesOnChunkData, out lastChunkSize);
+                if (lastChunkSize > 0)
                 {
-                    byte[] chunkData = toSendList.Take(bytesOnChunkData).ToArray();
-                    Debug.Log("Chunk info: " + chunkInfo);
+                    chunksCount++;
+                    lastChunkIndex = -(lastChunkSize - toSend.Length - 1);
 
-                    sendingStream.Add(CreateChunk(chunkInfo + i + separator, chunkData));
                 }
-                if (lastChunkIndex != -1)
+                string chunksLength = chunksCount.ToString();
+                string chunkInfo = dataId + separator + dataLength + separator + chunksLength + separator;
+
+                if (chunksCount >= 1)
                 {
-                    byte[] chunkData = GetNotFullChunk(toSend, lastChunkIndex);
+                    List<byte> toSendList = toSend.ToList();
+                    for (int i = 0; i < (lastChunkSize > 0 ? chunksCount - 1 : chunksCount); i++)
+                    {
+                        byte[] chunkData = new byte[bytesOnChunkData];
+                        chunkData = toSendList.Take(bytesOnChunkData).ToArray();
+                        Debug.Log("Chunk info: " + chunkInfo + i);
+
+                        sendingStream.Add(CreateChunk(chunkInfo + i + separator, chunkData));
+                    }
+                    if (lastChunkIndex != -1)
+                    {
+                        byte[] chunkData = GetNotFullChunk(toSend, lastChunkIndex);
+                        Debug.Log("Last chunk info: " + chunkInfo + (chunksCount - 1));
+
+                        sendingStream.Add(CreateChunk(chunkInfo + (chunksCount - 1) + separator, chunkData));
+                    }
+                }
+                else
+                {
+                    byte[] chunk = GetNotFullChunk(toSend, 0);
                     Debug.Log("Last chunk info: " + chunkInfo);
 
-                    sendingStream.Add(CreateChunk(chunkInfo + chunksCount + separator, chunkData));
+                    sendingStream.Add(CreateChunk(chunkInfo + '0' + separator, chunk));
                 }
             }
-            else
+            catch (Exception ex)
             {
-                byte[] chunk = GetNotFullChunk(toSend, 0);
-                //Debug.Log("Last chunk info: " + chunkInfo);
-
-                sendingStream.Add(CreateChunk(chunkInfo + '0' + separator, chunk));
+                Debug.LogException(ex);
             }
+
         }
 
         private byte[] GetNotFullChunk(byte[] data, int fromIndex)
         {
-            byte[] chunk = new byte[chunkSize];
-            data.CopyTo(chunk, fromIndex);
+            byte[] chunk = new byte[bytesOnChunkData];
+            int length = data.Length - fromIndex;
+            Array.ConstrainedCopy(data, fromIndex, chunk, 0, length);
             return chunk;
         }
 
         private byte[] CreateChunk(string chunkInfo, byte[] chunkData)
         {
             byte[] chunkInfoByted = Encoding.UTF8.GetBytes(chunkInfo);
-            //Debug.Log(chunkInfoByted.Length + " " +  chunkData.Length + " " + chunkSize);
-            byte[] chunk = new byte[chunkSize];
-            chunkInfoByted.CopyTo(chunk, 0);
-            chunkData.CopyTo(chunk, chunkInfoByted.Length - 1);
+            byte[] chunk = new byte[chunkSize + 1];
+
+            Array.ConstrainedCopy(chunkInfoByted, 0, chunk, 0, chunkInfoByted.Length);
+            Array.ConstrainedCopy(chunkData, 0, chunk, chunkInfoByted.Length - 1, chunkData.Length);
 
             return chunk;
         }
 
         private string GenerateId() => Guid.NewGuid().ToString().Replace(@"-", "");
-        private string NormalizeTolength(int value, int length) => value.ToString().PadLeft(length, '0');
 
         private void SendChunk()
         {
