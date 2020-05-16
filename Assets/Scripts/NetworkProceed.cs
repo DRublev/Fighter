@@ -74,7 +74,6 @@ namespace Assets.Scripts
         public void Send(byte[] toSend)
         {
             // Create chunk info and concat with chunk data
-            string dataId = GenerateId();
             string dataLength = toSend.Length.ToString();
             int lastChunkSize;
             int lastChunkIndex = -1;
@@ -86,7 +85,7 @@ namespace Assets.Scripts
 
             }
             string chunksLength = chunksCount.ToString();
-            string chunkInfo = dataId + separator + dataLength + separator + chunksLength + separator;
+            string chunkInfo = GenerateId() + separator + dataLength + separator + chunksLength + separator;
 
             if (chunksCount >= 1)
             {
