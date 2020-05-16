@@ -2,24 +2,27 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
-using Assets.Scripts;
-
 using UnityEngine;
+
 namespace Assets.Scripts
 {
     public class UDPReceiver
     {
+        public delegate string[] ToQueue(ref string buffer);
+        public ToQueue toQueue;
         public int Port
         {
             get;
             set;
         }
         private UdpClient udpReceiver;
-        protected byte[] readBuffer;
+        protected Encoding defaultEncoding = Encoding.UTF8;
+        protected byte[] readBuffer; // not in use
         protected string stringBuffer;
-        private Queue<string> received;
+        private Queue<string> completeMessages;
         /// <summary>
         /// 
         /// </summary>
@@ -28,7 +31,7 @@ namespace Assets.Scripts
         {
             Port = port;
             udpReceiver = new UdpClient(Port);
-            received = new Queue<string>();
+            completeMessages = new Queue<string>();
             stringBuffer = string.Empty;
             readBuffer = new byte[10240];
         }
@@ -56,36 +59,50 @@ namespace Assets.Scripts
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
             byte[] recvd = udpReceiver.EndReceive(result, ref endPoint);
             udpReceiver.BeginReceive(new AsyncCallback(Receive), null);
-            this.AddToByteBuffer(recvd);
-            stringBuffer += System.Text.Encoding.UTF8.GetString(recvd);
-            //checking for comlete msg
-            //parsing to string, may remove **************************************************
-            string[] msgs;
-            if (JSONParser.TryParseRegex(out msgs, stringBuffer, @"\[\[.*?\]\]"))
-            {
-                foreach (string element in msgs)
-                {
-                    received.Enqueue(element);
-                    stringBuffer = stringBuffer.Replace(element, string.Empty);
-                }
-            }
-            //************************************************************************
-            //we don't need infinite strings, save only last 256 chars
-            if (stringBuffer.Length >= 10240)
-            {
-                stringBuffer = stringBuffer.Substring(stringBuffer.Length - 256);
-            }
+            if (recvd.Length > 1024)
+                Debug.LogWarning("UDP Receiver: ALARM, incoming data is longer then 1kb");
+            AddToStringBuffer(recvd);
         }
+        /// <summary>
+        /// not in use
+        /// </summary>
+        /// <param name="bytes"></param>
         protected void AddToByteBuffer(byte[] bytes)
         {
             //todo
         }
-        public bool GetMsg(ref List<Vector2JSON[]> result)
+        protected void AddToStringBuffer(byte[] buffer, Encoding encoding)
         {
-            if (received.Count == 0)
-                return false;
-            result = JSONParser.GetBonesList(received.Dequeue());
-            return true;
+            stringBuffer = encoding.GetString(buffer);
+            if (stringBuffer.Length >= 10240)
+            {
+                stringBuffer = stringBuffer.Substring(stringBuffer.Length - 256);
+            }
+            EnqueueMessages();
+        }
+        protected void AddToStringBuffer(byte[] buffer)
+        {
+            AddToStringBuffer(buffer, defaultEncoding);
+        }
+        private void EnqueueMessages()
+        {
+            foreach (string element in toQueue.Invoke(ref stringBuffer))
+            {
+                completeMessages.Enqueue(element);
+            }
+        }
+        public ref byte[] GetReceivedByte()
+        {
+            return ref readBuffer;
+        }
+        public ref string GetReceivedString()
+        {
+            return ref stringBuffer;
+        }
+        public string GetMessage()
+        {
+            //temporary
+            return completeMessages.Dequeue();
         }
     }
 
@@ -108,12 +125,13 @@ namespace Assets.Scripts
         }
         public new void ReceiveStart()
         {
-            this.Connect();
+            Connect();
             readingThread = new Thread(new ThreadStart(Receiver));
         }
         public new void ReceiveEnd()
         {
-
+            readingThread.Abort();
+            tcpClient.Close();
         }
         private async void Connect()
         {
@@ -131,7 +149,18 @@ namespace Assets.Scripts
         }
         private void Receiver()
         {
-
+            if (netStream.CanRead)
+            {
+                byte[] buffer = new byte[1024];
+                netStream.Read(buffer, 0, buffer.Length);
+                AddToStringBuffer(buffer);
+            }
+            else
+            {
+                Debug.LogWarning("TCP receiver: network stream cant be read");
+            }
+            Receiver();
         }
     }
+
 }
