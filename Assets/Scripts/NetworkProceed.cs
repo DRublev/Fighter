@@ -18,7 +18,7 @@ public class NetworkProceed : MonoBehaviour
     {
         this.networkService = new NetworkService(ServerIP, Port);
         this.udpReceiver = new UDPReceiver(8081);
-        this.tcpReceiver = new TCPReciever(ServerIP, /*ENTER PORT HERE*/);
+        this.tcpReceiver = new TCPReciever(ServerIP, Port, 30);
     }
     private void Start()
     {

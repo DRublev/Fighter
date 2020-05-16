@@ -106,7 +106,7 @@ public class TCPReciever : UDPReceiver
     }
     public new void ReceiveStart()
     {
-        this.Connect();
+        Connect();
         readingThread = new Thread(new ThreadStart(Receiver));
     }
     public new void ReceiveEnd()
@@ -129,6 +129,16 @@ public class TCPReciever : UDPReceiver
     }
     private void Receiver()
     {
-        
+        if(netStream.CanRead)
+        {
+            byte[] buffer = new byte[1024];
+            netStream.Read(buffer, 0, buffer.Length);
+            AddToByteBuffer(buffer);
+        }
+        else
+        {
+            Debug.LogWarning("TCP receiver: network stream cant be read");
+        }
+        Receiver();
     }
 }
