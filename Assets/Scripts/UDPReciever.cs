@@ -3,15 +3,19 @@ using System.Net.Sockets;
 using System.Net;
 using System.Collections.Generic;
 using System.Threading;
+using System.Text;
 using UnityEngine;
 public class UDPReceiver
 {
+    public delegate string[] ToQueue(ref string buffer);
+    public ToQueue toQueue;
     public int Port
     { get; set; }
     private UdpClient udpReceiver;
-    protected byte[] readBuffer;
+    protected Encoding defaultEncoding = Encoding.UTF8;
+    protected byte[] readBuffer; // not in use
     protected string stringBuffer;
-    private Queue<string> received;
+    private Queue<string> completeMessages;
     /// <summary>
     /// 
     /// </summary>
@@ -20,7 +24,7 @@ public class UDPReceiver
     {
         Port = port;
         udpReceiver = new UdpClient(Port);
-        received = new Queue<string>();
+        completeMessages = new Queue<string>();
         stringBuffer = string.Empty;
         readBuffer = new byte[10240];
     }
@@ -49,36 +53,37 @@ public class UDPReceiver
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
         byte[] recvd = udpReceiver.EndReceive(result, ref endPoint);
         udpReceiver.BeginReceive(new AsyncCallback(Receive), null);
-        this.AddToByteBuffer(recvd);
-        stringBuffer += System.Text.Encoding.UTF8.GetString(recvd);
-        //checking for comlete msg
-        //parsing to string, may remove **************************************************
-        string[] msgs;
-        if (JSONParser.TryParseRegex(out msgs, stringBuffer, @"\[\[.*?\]\]"))
-        {
-            foreach (string element in msgs)
-            {
-                received.Enqueue(element);
-                stringBuffer = stringBuffer.Replace(element, string.Empty);
-            }
-        }
-        //************************************************************************
-        //we don't need infinite strings, save only last 256 chars
-        if (stringBuffer.Length >= 10240)
-        {
-            stringBuffer = stringBuffer.Substring(stringBuffer.Length - 256);
-        }
+        if (recvd.Length > 1024)
+            Debug.LogWarning("UDP Receiver: ALARM, incoming data is longer then 1kb");
+        AddToStringBuffer(recvd);
     }
+    /// <summary>
+    /// not in use
+    /// </summary>
+    /// <param name="bytes"></param>
     protected void AddToByteBuffer(byte[] bytes)
     {
         //todo
     }
-    public bool GetMsg(ref List<Vector2JSON[]> result)
+    protected void AddToStringBuffer(byte[] buffer, Encoding encoding)
     {
-        if (received.Count == 0)
-            return false;
-        result = JSONParser.GetBonesList(received.Dequeue());
-        return true;
+        stringBuffer = encoding.GetString(buffer);
+        if(stringBuffer.Length >= 10240)
+        {
+            stringBuffer = stringBuffer.Substring(stringBuffer.Length - 256);
+        }
+        EnqueueMessages();
+    }
+    protected void AddToStringBuffer(byte[] buffer)
+    {
+        AddToStringBuffer(buffer, defaultEncoding);
+    }
+    private void EnqueueMessages()
+    {
+        foreach (string element in toQueue.Invoke(ref stringBuffer))
+        {
+            completeMessages.Enqueue(element);
+        }
     }
     public ref byte[] GetReceivedByte()
     {
@@ -87,6 +92,11 @@ public class UDPReceiver
     public ref string GetReceivedString()
     {
         return ref stringBuffer;
+    }
+    public string GetMessage()
+    {
+        //temporary
+        return completeMessages.Dequeue();
     }
 }
 
@@ -112,6 +122,7 @@ public class TCPReciever : UDPReceiver
     public new void ReceiveEnd()
     {
         readingThread.Abort();
+        tcpClient.Close();
     }
     private async void Connect()
     {
@@ -133,7 +144,7 @@ public class TCPReciever : UDPReceiver
         {
             byte[] buffer = new byte[1024];
             netStream.Read(buffer, 0, buffer.Length);
-            AddToByteBuffer(buffer);
+            AddToStringBuffer(buffer);
         }
         else
         {

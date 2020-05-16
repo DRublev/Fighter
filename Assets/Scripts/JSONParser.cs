@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Text;
 using UnityEngine;
 public static class JSONParser
 {
@@ -39,7 +40,7 @@ public static class JSONParser
         return parsed;
     }
 
-    public static bool TryParseRegex(out string[] result, string input, string regexString)
+    private static bool TryParseRegex(out string[] result, string input, string regexString)
     {
         Regex regex = new Regex(regexString);
         MatchCollection matches = regex.Matches(input);
@@ -52,6 +53,18 @@ public static class JSONParser
         }
         return true;
     }
-
+    public static string[] GetBoneMessage(ref string buffer)
+    {
+        return GetMessage(ref buffer, @"\[\[.*?\]\]");
+    }
+    public static string[] GetMessage(ref string buffer, string regex)
+    {
+        string[] result;
+        if (!TryParseRegex(out result, buffer, regex))
+        {
+            Debug.Log("Can't get message by template: " + regex);
+        }
+        return result;
+    }
 }
 

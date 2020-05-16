@@ -18,7 +18,9 @@ public class NetworkProceed : MonoBehaviour
     {
         this.networkService = new NetworkService(ServerIP, Port);
         this.udpReceiver = new UDPReceiver(8081);
-        this.tcpReceiver = new TCPReciever(ServerIP, Port, 30);
+        this.tcpReceiver = new TCPReciever("127.0.0.1", 500, 30);
+        //add enqueuing of bone messages
+        tcpReceiver.toQueue += JSONParser.GetBoneMessage;
     }
     private void Start()
     {
@@ -55,10 +57,9 @@ public class NetworkProceed : MonoBehaviour
 
     public List<Vector2[]> RecieveList()
     {
-        List<Vector2JSON[]> result = new List<Vector2JSON[]>();
-        if (!udpReceiver.GetMsg(ref result))
-            Debug.Log("No usefull info riceived via UDP");
+        List<Vector2JSON[]> result = JSONParser.GetBonesList(tcpReceiver.GetMessage());
         List<Vector2[]> uVector2 = new List<Vector2[]>();
+
         //dumb but fast to make
         foreach(Vector2JSON[] element in result)
         {
