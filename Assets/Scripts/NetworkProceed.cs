@@ -22,7 +22,7 @@ namespace Assets.Scripts
         public float sendingPeriod = 0.4f;
 
         private static readonly string separator = "||";
-        private static readonly int bytesOnDataId = 32;
+        private static readonly int bytesOnDataId = 36;
         private static readonly int bytesOnDataSize = 6;
         private static readonly int bytesOnChunkIndex = 6;
         private static readonly int bytesOnChunkLength = 6;
@@ -87,7 +87,6 @@ namespace Assets.Scripts
             }
             string chunksLength = chunksCount.ToString();
             string chunkInfo = dataId + separator + dataLength + separator + chunksLength + separator;
-            Debug.Log("Data chunk info: " + chunkInfo);
 
             if (chunksCount >= 1)
             {
@@ -95,21 +94,24 @@ namespace Assets.Scripts
                 for (int i = 0; i < (lastChunkSize > 0 ? chunksCount - 1 : chunksCount); i++)
                 {
                     byte[] chunkData = toSendList.Take(bytesOnChunkData).ToArray();
-                    chunkInfo += i + separator;
-                    sendingStream.Add(CreateChunk(chunkInfo, chunkData));
+                    Debug.Log("Chunk info: " + chunkInfo);
+
+                    sendingStream.Add(CreateChunk(chunkInfo + i + separator, chunkData));
                 }
                 if (lastChunkIndex != -1)
                 {
                     byte[] chunkData = GetNotFullChunk(toSend, lastChunkIndex);
-                    chunkInfo += chunksCount + separator;
-                    sendingStream.Add(CreateChunk(chunkInfo, chunkData));
+                    Debug.Log("Last chunk info: " + chunkInfo);
+
+                    sendingStream.Add(CreateChunk(chunkInfo + chunksCount + separator, chunkData));
                 }
             }
             else
             {
                 byte[] chunk = GetNotFullChunk(toSend, 0);
-                chunkInfo += 0 + separator;
-                sendingStream.Add(CreateChunk(chunkInfo, chunk));
+                //Debug.Log("Last chunk info: " + chunkInfo);
+
+                sendingStream.Add(CreateChunk(chunkInfo + '0' + separator, chunk));
             }
         }
 
@@ -123,6 +125,7 @@ namespace Assets.Scripts
         private byte[] CreateChunk(string chunkInfo, byte[] chunkData)
         {
             byte[] chunkInfoByted = Encoding.UTF8.GetBytes(chunkInfo);
+            //Debug.Log(chunkInfoByted.Length + " " +  chunkData.Length + " " + chunkSize);
             byte[] chunk = new byte[chunkSize];
             chunkInfoByted.CopyTo(chunk, 0);
             chunkData.CopyTo(chunk, chunkInfoByted.Length - 1);
@@ -130,7 +133,7 @@ namespace Assets.Scripts
             return chunk;
         }
 
-        private string GenerateId() => Guid.NewGuid().ToString().Replace(@"\-*", "");
+        private string GenerateId() => Guid.NewGuid().ToString().Replace(@"-", "");
         private string NormalizeTolength(int value, int length) => value.ToString().PadLeft(length, '0');
 
         private void SendChunk()
