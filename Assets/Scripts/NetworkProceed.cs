@@ -12,15 +12,18 @@ public class NetworkProceed : MonoBehaviour
 
     private NetworkService networkService = null;
     private UDPReceiver udpReceiver;
+    private TCPReciever tcpReceiver;
 
     void Awake()
     {
         this.networkService = new NetworkService(ServerIP, Port);
         this.udpReceiver = new UDPReceiver(8081);
+        this.tcpReceiver = new TCPReciever(ServerIP, /*ENTER PORT HERE*/);
     }
     private void Start()
     {
         udpReceiver.ReceiveStart();
+        tcpReceiver.ReceiveStart();
     }
     private void FixedUpdate()
     {

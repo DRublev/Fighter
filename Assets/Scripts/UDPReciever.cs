@@ -79,7 +79,15 @@ public class UDPReceiver
             return false;
         result = JSONParser.GetBonesList(received.Dequeue());
         return true;
-    }    
+    }
+    public ref byte[] GetReceivedByte()
+    {
+        return ref readBuffer;
+    }
+    public ref string GetReceivedString()
+    {
+        return ref stringBuffer;
+    }
 }
 
 public class TCPReciever : UDPReceiver
@@ -103,7 +111,7 @@ public class TCPReciever : UDPReceiver
     }
     public new void ReceiveEnd()
     {
-
+        readingThread.Abort();
     }
     private async void Connect()
     {
