@@ -13,25 +13,37 @@ namespace Assets.Scripts
     {
         public string ServerIP = "62.122.242.63";
         public int Port = 8080;
+        public int RecievePort = 8081;
 
-        private NetworkService networkService = null;
+        private UDPSender sender = null;
         private UDPReceiver udpReceiver;
         private TCPReciever tcpReceiver;
 
+        public float sendingPeriod = 0.4f;
+
+        private static int chunkSize = 1024 + 32 + 6 + 6 + 6;
+        private readonly byte[] emptyChunk = new byte[chunkSize];
+        private int recievingFramerate = 30;
+
         void Awake()
         {
-            this.networkService = new NetworkService(ServerIP, Port);
-            this.udpReceiver = new UDPReceiver(8081);
-            this.tcpReceiver = new TCPReciever("127.0.0.1", 500, 30);
+            this.sender = new UDPSender(ServerIP, Port);
+            this.tcpReceiver = new TCPReciever(ServerIP, RecievePort, recievingFramerate);
             //add enqueuing of bone messages
-            tcpReceiver.toQueue += JSONParser.GetBoneMessage;
+            //tcpReceiver.toQueue += JSONParser.GetBoneMessage;
         }
         private void Start()
         {
-            udpReceiver.ReceiveStart();
-            tcpReceiver.ReceiveStart();
+            //tcpReceiver.ReceiveStart();
         }
-        private void FixedUpdate()
+
+        void OnDisable()
+        {
+            // Close all connections
+            sender.Close();
+        }
+
+        public void Send(ref List<byte> toSend)
         {
 
         }
@@ -40,10 +52,10 @@ namespace Assets.Scripts
         {
             try
             {
-                if (this.networkService != null)
+                if (sender != null)
                 {
                     Debug.Log("Data size is " + toSendBytes.Length);
-                    this.networkService.Send(toSendBytes, new AsyncCallback(SendCallBack));
+                    sender.Send(toSendBytes, new AsyncCallback(SendCallBack));
                 }
             }
             catch (Exception ex)
@@ -52,11 +64,12 @@ namespace Assets.Scripts
             }
         }
 
+        public byte[] GetEmptyChunk() => emptyChunk;
+
         private static void SendCallBack(IAsyncResult result)
         {
             UdpClient udpClient = (UdpClient) result.AsyncState;
             udpClient.EndSend(result);
-            Debug.Log("Sending data " + udpClient.Available);
         }
 
         public List<Vector2[]> RecieveList()
