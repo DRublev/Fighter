@@ -1,57 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Assets.Scripts;
 using UnityEngine;
-public static class JSONParser
+namespace Assets.Scripts
 {
-    public static List<Vector2JSON[]> GetBonesList(string array)
+
+    public static class JSONParser
     {
-        string[] singleArrays = GetSingleDimensionArrays(array);
-        string[] vectors;
-        Vector2JSON[] vectorJSONs;
-        List<Vector2JSON[]> result = new List<Vector2JSON[]>();
-        foreach(string element in singleArrays)
+        public static List<Vector2JSON[]> GetBonesList(string array)
         {
-            TryParseRegex(out vectors, element, @"\{.*?\}");
-            vectorJSONs = new Vector2JSON[vectors.Length];
-            for(int i = 0; i<vectors.Length; i++)
+            string[] singleArrays = GetSingleDimensionArrays(array);
+            string[] vectors;
+            Vector2JSON[] vectorJSONs;
+            List<Vector2JSON[]> result = new List<Vector2JSON[]>();
+            foreach (string element in singleArrays)
             {
-                vectorJSONs[i] = JsonUtility.FromJson<Vector2JSON>(vectors[i]);
+                TryParseRegex(out vectors, element, @"\{.*?\}");
+                vectorJSONs = new Vector2JSON[vectors.Length];
+                for (int i = 0; i < vectors.Length; i++)
+                {
+                    vectorJSONs[i] = JsonUtility.FromJson<Vector2JSON>(vectors[i]);
+                }
+                result.Add(vectorJSONs);
             }
-            result.Add(vectorJSONs);
+            return result;
         }
-        return result;
-    }
-    private static string[] GetSingleDimensionArrays(string array)
-    {
-        string[] parsed;
-        if(!TryParseRegex(out parsed, array, @"\[.*?\]"))
+        private static string[] GetSingleDimensionArrays(string array)
         {
-            Debug.Log("JSON PARSER: Couldn't locate sub arrays in: " + array);
+            string[] parsed;
+            if (!TryParseRegex(out parsed, array, @"\[.*?\]"))
+            {
+                Debug.Log("JSON PARSER: Couldn't locate sub arrays in: " + array);
+                return parsed;
+            }
+            //Isn't necessary but i'd like to keep everything in the same format
+            for (int i = 0; i < parsed.Length; i++)
+            {
+                parsed[i] = parsed[i].Replace("[[", "[");
+                parsed[i] = parsed[i].Replace("]]", "]");
+            }
             return parsed;
         }
-        //Isn't necessary but i'd like to keep everything in the same format
-        for(int i = 0; i < parsed.Length; i++)
-        {
-            parsed[i] = parsed[i].Replace("[[", "[");
-            parsed[i] = parsed[i].Replace("]]", "]");
-        }
-        return parsed;
-    }
 
-    public static bool TryParseRegex(out string[] result, string input, string regexString)
-    {
-        Regex regex = new Regex(regexString);
-        MatchCollection matches = regex.Matches(input);
-        result = new string[matches.Count];
-        if (matches.Count == 0)
-            return false;
-        for (int i = 0; i < matches.Count; i++)
+        public static bool TryParseRegex(out string[] result, string input, string regexString)
         {
-            result[i] = matches[i].Value;
+            Regex regex = new Regex(regexString);
+            MatchCollection matches = regex.Matches(input);
+            result = new string[matches.Count];
+            if (matches.Count == 0)
+                return false;
+            for (int i = 0; i < matches.Count; i++)
+            {
+                result[i] = matches[i].Value;
+            }
+            return true;
         }
-        return true;
-    }
 
+    }
 }
-

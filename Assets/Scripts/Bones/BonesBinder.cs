@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using Assets.Scripts.Types;
 using UnityEngine;
 
 // Output format here: https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/doc/output.md#output-format
@@ -17,7 +17,6 @@ namespace Assets.Scripts
     /// Note that it's not tested yet
     /// </summary>
     /// <param name="bonePoses">List of { x, y } coords. Bones will be created at this coordinates</param>
-
     /* 
         I'd like to pass one of skeleton types (see Types.cs), but i dont know how to do this
         I tried  smth like BonesBinder<T> where T : IConvertible
@@ -100,11 +99,11 @@ namespace Assets.Scripts
         ///<summary>
         ///<param name="toBone">Bone to animate. It will get bone name and find GameObject with this name</param>
         // I think we need another class (decoratior) to hanlde animation logic
-        public void AddAnimationClip(Body25 toBone, Type? type, WrapMode? mode, AnimationCurve? curve)
+        public void AddAnimationClip(Body25 toBone, WrapMode? mode)
         {
-            AnimationCurve actualCurve = curve != null ? curve : defaultAnimationCurve;
+            AnimationCurve actualCurve = defaultAnimationCurve;
             AnimationClip clip = new AnimationClip();
-            clip.SetCurve(toBone.ToString(), type != null ? type : typeof(Transform), "localPosition.y", actualCurve);
+            clip.SetCurve(toBone.ToString(), typeof(Transform), "localPosition.y", actualCurve);
             clip.legacy = true;
 
             clip.wrapMode = mode != null ? (WrapMode) mode : WrapMode.Once;

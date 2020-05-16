@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 
+using Assets.Scripts;
+
 using UnityEngine;
 
 public class NetworkProceed : MonoBehaviour
@@ -20,11 +22,11 @@ public class NetworkProceed : MonoBehaviour
     }
     private void Start()
     {
-        udpReceiver.ReceiveStart();
+        //udpReceiver.ReceiveStart();
     }
     private void FixedUpdate()
     {
-        
+
     }
 
     public void Send(byte[] toSendBytes)
@@ -57,10 +59,10 @@ public class NetworkProceed : MonoBehaviour
             Debug.Log("No usefull info riceived via UDP");
         List<Vector2[]> uVector2 = new List<Vector2[]>();
         //dumb but fast to make
-        foreach(Vector2JSON[] element in result)
+        foreach (Vector2JSON[] element in result)
         {
             Vector2[] vectors = new Vector2[element.Length];
-            for(int i = 0; i < element.Length; i++)
+            for (int i = 0; i < element.Length; i++)
             {
                 vectors[i] = element[i].ToVector2();
             }
