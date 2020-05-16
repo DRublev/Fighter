@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
 
 using Assets.Scripts;
 
@@ -17,17 +14,11 @@ public class CameraStream : MonoBehaviour
 	private WebCamTexture webCamTexture;
 
 	[SerializeField]
-	private RawImage toRenderRecievedImage;
-
-	[SerializeField]
 	private NetworkProceed network;
 
 	public float sendingPeriod = 0.4f;
 
-	private static int chunkSize = 1024 + 32 + 6 + 6 + 6;
-	private readonly byte[] emptyChunk = new byte[chunkSize];
-
-	private List<byte> webcamStream = new List<byte>();
+	private List<byte> webCamStream = new List<byte>();
 
 	void Start()
 	{
@@ -46,18 +37,7 @@ public class CameraStream : MonoBehaviour
 		rawImage.texture = webCamTexture;
 		webCamTexture.Play();
 
-		InvokeRepeating("TakeSnapshot", 0.2f, sendingPeriod / 1.5f);
-		InvokeRepeating("SendFromCamera", 0.1f, sendingPeriod);
-		var guid = Guid.NewGuid().ToString();
-	}
-
-	private void SendFromCamera()
-	{
-		if (webcamStream.Count >= chunkSize)
-		{
-			network.Send(webcamStream.Take(chunkSize).ToArray());
-			webcamStream.RemoveRange(0, chunkSize);
-		}
+		InvokeRepeating("TakeSnapshot", 0.2f, sendingPeriod);
 	}
 
 	private void TakeSnapshot()
@@ -69,10 +49,11 @@ public class CameraStream : MonoBehaviour
 
 		byte[] bytes = texture.EncodeToJPG();
 
-		webcamStream.AddRange(bytes);
-		webcamStream.AddRange(emptyChunk);
+		network.Send(bytes);
 	}
 
+
+	// Was used for debugging
 	private static void SaveTextureOnDisk(byte[] image)
 	{
 		try
