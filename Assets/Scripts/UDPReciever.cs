@@ -1,95 +1,166 @@
 ﻿using System;
-using System.Net.Sockets;
-using System.Net;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+
 using UnityEngine;
-public class UDPReceiver
+
+namespace Assets.Scripts
 {
-    //public string Ip
-    //{ get; set; }
-    public int Port
-    { get; set; }
-    private UdpClient udpReceiver;
-    private Queue<string> received;
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="port"></param>
-    public UDPReceiver(int port)
+    public class UDPReceiver
     {
-        //Ip = ip;
-        Port = port;
-        udpReceiver = new UdpClient(Port);
-        received = new Queue<string>();
-    }
-    public UDPReceiver() : this(8081)
-    {
+        public delegate string[] ToQueue(ref string buffer);
+        public ToQueue toQueue;
+        public int Port
+        {
+            get;
+            set;
+        }
+        private UdpClient udpReceiver;
+        protected Encoding defaultEncoding = Encoding.UTF8;
+        protected byte[] readBuffer; // not in use
+        protected string stringBuffer;
+        private Queue<string> completeMessages;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="port"></param>
+        public UDPReceiver(int port)
+        {
+            Port = port;
+            udpReceiver = new UdpClient(Port);
+            completeMessages = new Queue<string>();
+            stringBuffer = string.Empty;
+            readBuffer = new byte[10240];
+        }
+        public UDPReceiver() : this(8081)
+        { }
+
+        public void ReceiveStart()
+        {
+            try
+            {
+                udpReceiver.BeginReceive(new AsyncCallback(Receive), null);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+        public void ReceiveEnd()
+        {
+            udpReceiver.Close();
+        }
+        //beginReceive callback
+        private void Receive(IAsyncResult result)
+        {
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
+            byte[] recvd = udpReceiver.EndReceive(result, ref endPoint);
+            udpReceiver.BeginReceive(new AsyncCallback(Receive), null);
+            if (recvd.Length > 1024)
+                Debug.LogWarning("UDP Receiver: ALARM, incoming data is longer then 1kb");
+            AddToStringBuffer(recvd);
+        }
+        /// <summary>
+        /// not in use
+        /// </summary>
+        /// <param name="bytes"></param>
+        protected void AddToByteBuffer(byte[] bytes)
+        {
+            //todo
+        }
+        protected void AddToStringBuffer(byte[] buffer, Encoding encoding)
+        {
+            stringBuffer = encoding.GetString(buffer);
+            if (stringBuffer.Length >= 10240)
+            {
+                stringBuffer = stringBuffer.Substring(stringBuffer.Length - 256);
+            }
+            EnqueueMessages();
+        }
+        protected void AddToStringBuffer(byte[] buffer)
+        {
+            AddToStringBuffer(buffer, defaultEncoding);
+        }
+        private void EnqueueMessages()
+        {
+            foreach (string element in toQueue.Invoke(ref stringBuffer))
+            {
+                completeMessages.Enqueue(element);
+            }
+        }
+        public ref byte[] GetReceivedByte()
+        {
+            return ref readBuffer;
+        }
+        public ref string GetReceivedString()
+        {
+            return ref stringBuffer;
+        }
+        public string GetMessage()
+        {
+            //temporary
+            return completeMessages.Dequeue();
+        }
     }
 
-    public void ReceiveStart()
+    public class TCPReciever : UDPReceiver
     {
-        try
+        public string Host
         {
-            udpReceiver.BeginReceive(new AsyncCallback(Receive), null);
+            get;
+            set;
         }
-        catch (Exception e)
+        private TcpClient tcpClient;
+        private NetworkStream netStream;
+        private int readTimeout;
+        private Thread readingThread;
+        public TCPReciever(string host, int port, int ticksPerSecond) : base(port)
         {
-            Debug.LogException(e);
+            tcpClient = new TcpClient();
+            Host = host;
+            readTimeout = 1000 / ticksPerSecond;
         }
-    }
-    public void ReceiveEnd()
-    {
-        udpReceiver.Close();
-    }
-    //beginReceive callback
-    private void Receive(IAsyncResult result)
-    {
-        IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
-        byte[] recvd = udpReceiver.EndReceive(result, ref endPoint);
-        udpReceiver.BeginReceive(new AsyncCallback(Receive), null);
-        received.Enqueue(System.Text.Encoding.UTF8.GetString(recvd));
-    }
-    public bool GetMsg(ref List<Vector2[]> result)
-    {
-        if (received.Count == 0)
-            return false;
-        string[] blocks = this.GetBlocks(received.Dequeue());
-        foreach (string element in blocks)
+        public new void ReceiveStart()
         {
-            string[] rawVectors = element.Trim(new char[] { '{', '}' }).Split(new string[] { "},{" }, StringSplitOptions.None);
-            if (rawVectors.Length != 2)
-                Debug.LogError("Data received via UDP is fucked");
-            Vector2[] vectors = new Vector2[2];
-            for (int i = 0; i < 2; i++)
+            Connect();
+            readingThread = new Thread(new ThreadStart(Receiver));
+        }
+        public new void ReceiveEnd()
+        {
+            readingThread.Abort();
+            tcpClient.Close();
+        }
+        private async void Connect()
+        {
+            try
             {
-                vectors[i] = this.ToVector(rawVectors[i]);
+                await tcpClient.ConnectAsync(Host, Port);
+                netStream = tcpClient.GetStream();
+                netStream.ReadTimeout = readTimeout;
+                Debug.Log("Connected to: " + Host + " : " + Port);
             }
-            result.Add(vectors);
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
-        return true;
-    }
-    private string[] GetBlocks(string arg)
-    {
-        arg = arg.Trim(new char[] { '[', ']' });
-        return arg.Split(new string[] { "],[" }, StringSplitOptions.None);
-    }
-    private Vector2 ToVector(string str)
-    {
-        Vector2 vector = new Vector2();
-        string[] divStr = str.Split(new char[] { ',' });
-        string digitStr = null;
-        foreach (char ch in divStr[0])
+        private void Receiver()
         {
-            if (char.IsDigit(ch))
-                digitStr += ch;
+            if (netStream.CanRead)
+            {
+                byte[] buffer = new byte[1024];
+                netStream.Read(buffer, 0, buffer.Length);
+                AddToStringBuffer(buffer);
+            }
+            else
+            {
+                Debug.LogWarning("TCP receiver: network stream cant be read");
+            }
+            Receiver();
         }
-        vector.x = int.Parse(digitStr);
-        foreach (char ch in divStr[1])
-        {
-            if (char.IsDigit(ch))
-                digitStr += ch;
-        }
-        vector.y = int.Parse(digitStr);
-        return vector;
     }
+
 }
