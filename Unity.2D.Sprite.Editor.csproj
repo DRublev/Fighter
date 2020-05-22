@@ -9,10 +9,10 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{fa5dab47-4755-76a5-06bf-bc0a9805073a}</ProjectGuid>
+    <ProjectGuid>{169268a8-66d9-5831-149b-16a8bac844af}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>PhotonUnityNetworking.Utilities.Culling.Editor</AssemblyName>
+    <AssemblyName>Unity.2D.Sprite.Editor</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -26,7 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
-    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <NoConfig>true</NoConfig>
@@ -36,8 +36,40 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Photon\PhotonUnityNetworking\UtilityScripts\Culling\Editor\CullAreaEditor.cs" />
-     <None Include="Assets\Photon\PhotonUnityNetworking\UtilityScripts\Culling\Editor\PhotonUnityNetworking.Utilities.Culling.Editor.asmdef" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\AssemblyInfo.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\IAssetDatabase.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\IEvent.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\IGL.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\IGUIUtility.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\IHandles.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\ISpriteEditorDataProvider.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\ITexture.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Interface\IUndoSystem.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\ShapeEditor\ShapeEditor.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\ShapeEditor\ShapeEditorRectSelection.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditor\SpriteEditorHandles.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditor\SpriteEditorMenu.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditor\SpriteEditorUtility.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditor\SpriteEditorWindow.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditor\SpriteRect.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditor\SpriteUtilityWindow.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\ISpriteEditorModule.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteEditorData.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteFrameModule\SpriteFrameModule.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteFrameModule\SpriteFrameModuleBase.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteFrameModule\SpriteFrameModuleBaseView.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteFrameModule\SpriteFrameModuleView.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteFrameModule\SpritePolygonModeModule.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteFrameModule\SpritePolygonModeModuleView.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteOutlineModule.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpritePhysicsShapeModule.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\SpriteSecondaryTexturesModule.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\TextureImporterDataProvider.cs" />
+     <Compile Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\SpriteEditorModule\TextureImporterDataProviderImplementation.cs" />
+     <None Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\UI\SpriteEditor\SpriteFrameModuleInspector.uxml" />
+     <None Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\Unity.2D.Sprite.Editor.asmdef" />
+     <None Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\UI\SpriteEditor\PolygonChangeShapeWindow.uxml" />
+     <None Include="C:\Program Files\Unity\Hub\Editor\2020.1.0b9\Editor\Data\Resources\PackageManager\BuiltInPackages\com.unity.2d.sprite\Editor\UI\SpriteEditor\SpriteEditor.uss" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2020.1.0b9/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -616,11 +648,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{4022e5b4-5db2-bec2-36d5-bc22e6440fa7}</Project>
-      <Name>PhotonUnityNetworking.Utilities</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="UnityEditor.UI.csproj">
       <Project>{953c4370-ceff-67a3-2573-8a4d99464065}</Project>
       <Name>UnityEditor.UI</Name>
