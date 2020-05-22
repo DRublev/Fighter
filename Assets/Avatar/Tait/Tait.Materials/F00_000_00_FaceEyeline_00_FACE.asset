@@ -94,3 +94,4 @@ Material:
     - _OutlineColor: {r: 0.27450982, g: 0.09019608, b: 0.1254902, a: 1}
     - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadeColor: {r: 0.4039216, g: 0.12156863, b: 0.14975207, a: 1}
+  m_BuildTextureStacks: []

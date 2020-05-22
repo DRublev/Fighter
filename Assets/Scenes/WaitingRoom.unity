@@ -335,7 +335,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 643252421}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 462b1a9352b21344da091385de4e3e23, type: 3}
+  m_Script: {fileID: 11500000, guid: ccd6c5a8af8a9b5409141c82b7d5c33c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   multiplayerSceneIndex: 2
@@ -354,7 +354,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 643252421}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Script: {fileID: 11500000, guid: 73046628addfbcc489945d10f2266428, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ObservedComponentsFoldoutOpen: 1

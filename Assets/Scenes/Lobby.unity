@@ -206,8 +206,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1810972991}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: DelayLobbyController, Assembly-CSharp
         m_MethodName: CreateRoom
         m_Mode: 1
         m_Arguments:
@@ -282,10 +282,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 202890189}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ed45daee1f5d414bafbf54d57834324, type: 3}
+  m_Script: {fileID: 11500000, guid: df081115fd048544eb29a95c66c36d18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waitingRoomSceneIndex: 0
+  multiplayerSceneIndex: 2
 --- !u!4 &202890191
 Transform:
   m_ObjectHideFlags: 0
@@ -794,7 +794,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1308662423}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51168f443c93a61428fb6b0a13435742, type: 3}
+  m_Script: {fileID: 11500000, guid: b636db035e1c3f444866fdd83939c866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1444362644
@@ -961,8 +961,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1810972991}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: CreateRoom
+        m_TargetAssemblyTypeName: StartLobbyController, Assembly-CSharp
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1293,7 +1293,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
-        m_MethodName: StartGame
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1367,12 +1367,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1810972990}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f713272e4f2254a47bef417c6f8fffeb, type: 3}
+  m_Script: {fileID: 11500000, guid: ff10d1e095a44334293f5e6765543830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayStartButton: {fileID: 1507099376}
-  delayCancleButton: {fileID: 158397368}
-  roomSize: 2
+  startBtn: {fileID: 1507099376}
+  cancleBtn: {fileID: 158397368}
+  RoomSize: 2
 --- !u!4 &1810972992
 Transform:
   m_ObjectHideFlags: 0
